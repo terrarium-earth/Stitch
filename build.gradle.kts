@@ -6,11 +6,11 @@ import net.fabricmc.loom.task.RemapJarTask
 
 plugins {
     java
-    id("maven-publish")
     id("com.teamresourceful.resourcefulgradle") version "0.0.+"
     id("dev.architectury.loom") version "1.6-SNAPSHOT" apply false
     id("architectury-plugin") version "3.4-SNAPSHOT"
     id("com.github.johnrengelman.shadow") version "7.1.2" apply false
+    id("maven-publish")
 }
 
 architectury {
@@ -19,23 +19,22 @@ architectury {
 }
 
 subprojects {
-    apply(plugin = "maven-publish")
     apply(plugin = "dev.architectury.loom")
     apply(plugin = "architectury-plugin")
     apply(plugin = "com.github.johnrengelman.shadow")
+    apply(plugin = "maven-publish")
 
     val minecraftVersion: String by project
     val modLoader = project.name
     val modId = rootProject.name
     val isCommon = modLoader == rootProject.projects.common.name
+    val loom: LoomGradleExtensionAPI by project
 
     base {
         archivesName.set("${rootProject.name}-$modLoader-$minecraftVersion")
     }
 
-    configure<LoomGradleExtensionAPI> {
-        silentMojangMappingsLicense()
-    }
+    loom.silentMojangMappingsLicense()
 
     repositories {
         maven(url = "https://maven.architectury.dev/")
@@ -47,7 +46,7 @@ subprojects {
 
     dependencies {
         "minecraft"("::$minecraftVersion")
-        "mappings"(project.the<LoomGradleExtensionAPI>().officialMojangMappings())
+        "mappings"(loom.officialMojangMappings())
     }
 
     java {
@@ -56,10 +55,6 @@ subprojects {
 
     tasks.jar {
         archiveClassifier.set("dev")
-    }
-
-    tasks.named<RemapJarTask>("remapJar") {
-        archiveClassifier.set(null as String?)
     }
 
     tasks.processResources {
@@ -74,10 +69,7 @@ subprojects {
             platformSetupLoomIde()
         }
 
-        val shadowCommon by configurations.creating {
-            isCanBeConsumed = false
-            isCanBeResolved = true
-        }
+        val shadowCommon by configurations.creating
 
         tasks {
             "shadowJar"(ShadowJar::class) {
@@ -88,7 +80,12 @@ subprojects {
             "remapJar"(RemapJarTask::class) {
                 dependsOn("shadowJar")
                 inputFile.set(named<ShadowJar>("shadowJar").flatMap { it.archiveFile })
+                archiveClassifier.set(null as String?)
             }
+        }
+    } else {
+        tasks.named<RemapJarTask>("remapJar") {
+            archiveClassifier.set(null as String?)
         }
     }
 
