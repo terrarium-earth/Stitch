@@ -4,12 +4,14 @@ import earth.terrarium.athena.api.client.utils.AppearanceAndTintGetter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.ColorResolver;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.lighting.LevelLightEngine;
 import net.minecraft.world.level.material.FluidState;
-import net.neoforged.neoforge.client.model.data.ModelDataManager;
+import net.neoforged.neoforge.client.model.data.ModelData;
+import net.neoforged.neoforge.common.world.AuxiliaryLightManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -57,14 +59,18 @@ public record WrappedGetter(BlockAndTintGetter getter) implements AppearanceAndT
     }
 
     @Override
-    public @Nullable BlockEntity getExistingBlockEntity(BlockPos pos) {
-        return getter.getExistingBlockEntity(pos);
+    public float getShade(float normalX, float normalY, float normalZ, boolean shade) {
+        return getter.getShade(normalX, normalY, normalZ, shade);
     }
 
     @Override
-    @SuppressWarnings("UnstableApiUsage")
-    public @Nullable ModelDataManager getModelDataManager() {
-        return getter.getModelDataManager();
+    public @Nullable AuxiliaryLightManager getAuxLightManager(@NotNull ChunkPos pos) {
+        return getter.getAuxLightManager(pos);
+    }
+
+    @Override
+    public @NotNull ModelData getModelData(@NotNull BlockPos pos) {
+        return getter.getModelData(pos);
     }
 
     @Override

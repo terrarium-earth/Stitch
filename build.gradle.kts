@@ -8,7 +8,7 @@ plugins {
     java
     id("maven-publish")
     id("com.teamresourceful.resourcefulgradle") version "0.0.+"
-    id("dev.architectury.loom") version "1.4-SNAPSHOT" apply false
+    id("dev.architectury.loom") version "1.6-SNAPSHOT" apply false
     id("architectury-plugin") version "3.4-SNAPSHOT"
     id("com.github.johnrengelman.shadow") version "7.1.2" apply false
 }
@@ -42,7 +42,7 @@ subprojects {
         maven(url = "https://maven.minecraftforge.net/")
         maven(url = "https://maven.neoforged.net/releases/")
         maven(url = "https://maven.msrandom.net/repository/root")
-        maven(url = "https://maven.resourcefulbees.com/repository/maven-public/")
+        maven(url = "https://maven.teamresourceful.com/repository/maven-public/")
     }
 
     dependencies {
@@ -64,7 +64,7 @@ subprojects {
 
     tasks.processResources {
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-        filesMatching(listOf("META-INF/mods.toml", "fabric.mod.json")) {
+        filesMatching(listOf("META-INF/neoforge.mods.toml", "fabric.mod.json")) {
             expand("version" to project.version)
         }
     }

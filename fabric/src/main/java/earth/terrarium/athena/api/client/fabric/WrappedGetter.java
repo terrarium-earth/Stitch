@@ -1,19 +1,22 @@
 package earth.terrarium.athena.api.client.fabric;
 
 import earth.terrarium.athena.api.client.utils.AppearanceAndTintGetter;
-import net.fabricmc.fabric.api.rendering.data.v1.RenderAttachedBlockView;
+import net.fabricmc.fabric.api.blockview.v2.FabricBlockView;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Holder;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.ColorResolver;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.lighting.LevelLightEngine;
 import net.minecraft.world.level.material.FluidState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.UnknownNullability;
 
-public record WrappedGetter(BlockAndTintGetter getter) implements AppearanceAndTintGetter, RenderAttachedBlockView {
+public record WrappedGetter(BlockAndTintGetter getter) implements AppearanceAndTintGetter, FabricBlockView {
 
     @Override
     public float getShade(Direction direction, boolean bl) {
@@ -75,5 +78,20 @@ public record WrappedGetter(BlockAndTintGetter getter) implements AppearanceAndT
     public Query query(BlockPos pos, Direction direction, BlockState fromState, BlockPos fromPos) {
         BlockState state = getter.getBlockState(pos);
         return new Query(state, state.getAppearance(this, pos, direction, fromState, fromPos));
+    }
+
+    @Override
+    public @Nullable Object getBlockEntityRenderData(BlockPos pos) {
+        return getter instanceof FabricBlockView blockView ? blockView.getBlockEntityRenderData(pos) : null;
+    }
+
+    @Override
+    public boolean hasBiomes() {
+        return getter instanceof FabricBlockView blockView && blockView.hasBiomes();
+    }
+
+    @Override
+    public @UnknownNullability Holder<Biome> getBiomeFabric(BlockPos pos) {
+        return getter instanceof FabricBlockView blockView ? blockView.getBiomeFabric(pos) : null;
     }
 }

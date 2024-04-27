@@ -102,7 +102,7 @@ public class AthenaBakedModel implements BakedModel, FabricBakedModel {
     }
 
     @Override
-    public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction direction, RandomSource random) {
+    public @NotNull List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction direction, RandomSource random) {
         var defaultQuads = this.defaultQuads;
         if (defaultQuads == null) {
             synchronized (this) {

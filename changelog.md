@@ -1,1 +1,1 @@
-- Fixed default quads on fabric (Technici4n)
+- Update to 1.20.5

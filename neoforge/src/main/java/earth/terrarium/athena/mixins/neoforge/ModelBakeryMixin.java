@@ -17,7 +17,7 @@ public abstract class ModelBakeryMixin {
     @Shadow protected abstract void cacheAndQueueDependencies(ResourceLocation resourceLocation, UnbakedModel unbakedModel);
 
     @Inject(
-            method = "Lnet/minecraft/client/resources/model/ModelBakery;loadModel(Lnet/minecraft/resources/ResourceLocation;)V",
+            method = "loadModel(Lnet/minecraft/resources/ResourceLocation;)V",
             at = @At("HEAD"),
             cancellable = true
     )
