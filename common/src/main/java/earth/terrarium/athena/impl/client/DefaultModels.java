@@ -8,13 +8,18 @@ public class DefaultModels {
 
     public static final String MODID = "athena";
 
+    private static ResourceLocation id(String name) {
+        return ResourceLocation.fromNamespaceAndPath(MODID, name);
+    }
+
     public static void init() {
-        FactoryManager.register(new ResourceLocation(MODID, "ctm"), ConnectedBlockModel.FACTORY);
-        FactoryManager.register(new ResourceLocation(MODID, "carpet_ctm"), ConnectedCarpetBlockModel.FACTORY);
-        FactoryManager.register(new ResourceLocation(MODID, "pane_ctm"), PaneConnectedBlockModel.FACTORY);
-        FactoryManager.register(new ResourceLocation(MODID, "giant"), GiantBlockModel.FACTORY);
-        FactoryManager.register(new ResourceLocation(MODID, "pillar"), PillarBlockModel.FACTORY);
-        FactoryManager.register(new ResourceLocation(MODID, "limited_pillar"), LimitedPillarBlockModel.FACTORY);
-        FactoryManager.register(new ResourceLocation(MODID, "pane_pillar"), PanePillarBlockModel.FACTORY);
+        FactoryManager.register(id("ctm"), ConnectedBlockModel.FACTORY);
+        FactoryManager.register(id("carpet_ctm"), ConnectedCarpetBlockModel.FACTORY);
+        FactoryManager.register(id("pane_ctm"), PaneConnectedBlockModel.FACTORY);
+        FactoryManager.register(id("giant"), GiantBlockModel.FACTORY);
+        FactoryManager.register(id("mural"), GiantBlockModel.FACTORY);
+        FactoryManager.register(id("pillar"), PillarBlockModel.FACTORY);
+        FactoryManager.register(id("limited_pillar"), LimitedPillarBlockModel.FACTORY);
+        FactoryManager.register(id("pane_pillar"), PanePillarBlockModel.FACTORY);
     }
 }

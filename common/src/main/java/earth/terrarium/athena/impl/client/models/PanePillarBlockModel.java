@@ -99,9 +99,6 @@ public class PanePillarBlockModel implements AthenaBlockModel {
             var tempNorth = north;
             north = south;
             south = tempNorth;
-            var tempEast = east;
-            east = west;
-            west = tempEast;
         }
 
 

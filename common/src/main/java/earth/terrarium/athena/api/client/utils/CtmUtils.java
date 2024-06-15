@@ -46,7 +46,7 @@ public final class CtmUtils {
     }
 
     public static Material blockMat(String id) {
-        return new Material(TextureAtlas.LOCATION_BLOCKS, new ResourceLocation(id));
+        return new Material(TextureAtlas.LOCATION_BLOCKS, ResourceLocation.parse(id));
     }
 
     public static <I, O> O tryParse(I input, Function<I, O> parser) {

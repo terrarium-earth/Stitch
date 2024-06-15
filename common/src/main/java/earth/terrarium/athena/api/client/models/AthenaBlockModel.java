@@ -2,6 +2,7 @@ package earth.terrarium.athena.api.client.models;
 
 import earth.terrarium.athena.api.client.utils.AppearanceAndTintGetter;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.core.BlockPos;
@@ -27,4 +28,9 @@ public interface AthenaBlockModel {
     }
 
     Int2ObjectMap<TextureAtlasSprite> getTextures(Function<Material, TextureAtlasSprite> getter);
+
+    @Nullable
+    default RenderType getRenderType() {
+        return null;
+    }
 }

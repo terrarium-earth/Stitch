@@ -4,7 +4,7 @@ import com.google.gson.JsonObject;
 import earth.terrarium.athena.api.client.models.AthenaBlockModel;
 import earth.terrarium.athena.api.client.models.AthenaModelFactory;
 import earth.terrarium.athena.api.client.models.NotNullUnbakedModel;
-import earth.terrarium.athena.impl.loading.AthenaDataLoader;
+import earth.terrarium.athena.impl.loading.AthenaResourceLoader;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
@@ -25,8 +25,8 @@ public class AthenaUnbakedModelLoader {
     }
 
     public @Nullable NotNullUnbakedModel loadModel(ModelResourceLocation modelId) {
-        if ("inventory".equals(modelId.getVariant())) return null;
-        JsonObject json = AthenaDataLoader.getData(this.id, modelId);
+        if (modelId == null || "inventory".equals(modelId.getVariant())) return null;
+        JsonObject json = AthenaResourceLoader.getData(this.id, modelId.id());
         return this.loadModel(json);
     }
 

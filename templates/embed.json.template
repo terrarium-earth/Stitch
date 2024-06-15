@@ -14,12 +14,6 @@
                     "label": "NeoForge",
                     "style": 5,
                     "url": "https://modrinth.com/mod/athena-ctm/version/${neoforge_link}"
-                },
-                {
-                    "type": 2,
-                    "label": "Forge",
-                    "style": 5,
-                    "url": "https://modrinth.com/mod/athena-ctm/version/${forge_link}"
                 }
             ]
 

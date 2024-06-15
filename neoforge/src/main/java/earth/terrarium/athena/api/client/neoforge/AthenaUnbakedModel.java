@@ -32,7 +32,7 @@ public class AthenaUnbakedModel implements NotNullUnbakedModel {
 
     @NotNull
     @Override
-    public BakedModel bake(@NotNull ModelBaker modelBaker, @NotNull Function<Material, TextureAtlasSprite> function, @NotNull ModelState modelState, @NotNull ResourceLocation resourceLocation) {
+    public BakedModel bake(@NotNull ModelBaker modelBaker, @NotNull Function<Material, TextureAtlasSprite> function, @NotNull ModelState modelState) {
         return new AthenaBakedModel(this.model.get(), function);
     }
 }

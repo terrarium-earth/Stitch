@@ -1,12 +1,13 @@
 package earth.terrarium.athena.mixins;
 
-import earth.terrarium.athena.impl.loading.AthenaDataLoader;
+import earth.terrarium.athena.impl.loading.AthenaResourceLoader;
+import net.minecraft.client.color.block.BlockColors;
+import net.minecraft.client.renderer.block.model.BlockModel;
+import net.minecraft.client.resources.model.BlockStateModelLoader;
 import net.minecraft.client.resources.model.ModelBakery;
-import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.resources.ResourceLocation;
-import org.spongepowered.asm.mixin.Final;
+import net.minecraft.util.profiling.ProfilerFiller;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -17,17 +18,15 @@ import java.util.Map;
 @Mixin(ModelBakery.class)
 public class ModelBakeryMixin {
 
-    @Shadow
-    @Final
-    public static ModelResourceLocation MISSING_MODEL_LOCATION;
-
-    @Shadow @Final private Map<ResourceLocation, List<ModelBakery.LoadedJson>> blockStateResources;
-
-    @Inject(method = "loadTopLevel", at = @At("HEAD"))
-    private void stitch$onStart(ModelResourceLocation id, CallbackInfo ci) {
-        if (id.equals(MISSING_MODEL_LOCATION)) { //Means start because this is the first thing loaded after the lists and maps are set.
-            AthenaDataLoader.setGetter(this.blockStateResources::get);
-        }
+    @Inject(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/resources/model/ModelBakery;registerModel(Lnet/minecraft/client/resources/model/ModelResourceLocation;Lnet/minecraft/client/resources/model/UnbakedModel;)V", ordinal = 0))
+    private void stitch$onStart(
+            BlockColors blockColors,
+            ProfilerFiller profilerFiller,
+            Map<ResourceLocation, BlockModel> map,
+            Map<ResourceLocation, List<BlockStateModelLoader.LoadedJson>> map2,
+            CallbackInfo ci
+    ) {
+        AthenaResourceLoader.INSTANCE.setGetter(map2::get);
     }
 
 }

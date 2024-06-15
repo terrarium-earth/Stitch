@@ -36,8 +36,14 @@ public class AthenaGeometryLoader implements IGeometryLoader<AthenaGeometryLoade
     public record Unbaked(AthenaUnbakedModelLoader loader, JsonObject json) implements IUnbakedGeometry<Unbaked> {
 
         @Override
-        public @NotNull BakedModel bake(@NotNull IGeometryBakingContext context, @NotNull ModelBaker baker, @NotNull Function<Material, TextureAtlasSprite> spriteGetter, @NotNull ModelState modelState, @NotNull ItemOverrides overrides, @NotNull ResourceLocation id) {
-            return loader.loadModel(json).bake(baker, spriteGetter, modelState, id);
+        public @NotNull BakedModel bake(
+                @NotNull IGeometryBakingContext context,
+                @NotNull ModelBaker baker,
+                @NotNull Function<Material, TextureAtlasSprite> spriteGetter,
+                @NotNull ModelState modelState,
+                @NotNull ItemOverrides arg3
+        ) {
+            return loader.loadModel(json).bake(baker, spriteGetter, modelState);
         }
     }
 }

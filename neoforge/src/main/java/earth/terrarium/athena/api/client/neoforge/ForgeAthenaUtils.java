@@ -6,10 +6,8 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.BlockElement;
 import net.minecraft.client.renderer.block.model.BlockElementFace;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.client.model.SimpleModelState;
 import net.neoforged.neoforge.client.model.geometry.UnbakedGeometryHelper;
 import org.jetbrains.annotations.ApiStatus;
@@ -22,18 +20,16 @@ import java.util.Map;
 public class ForgeAthenaUtils {
 
     public static final ModelState LOCKED_STATE = new SimpleModelState(Transformation.identity(), true);
-    public static final ModelResourceLocation DEFAULT_MODEL = new ModelResourceLocation(new ResourceLocation("minecraft:missingno"), "");
 
     public static List<BakedQuad> bakeQuad(AthenaQuad quad, Direction direction, TextureAtlasSprite sprite) {
         final Vector3f start = getStartPos(quad, direction);
         final Vector3f end = getEndPos(quad, direction);
-        final BlockElementFace face = new AthenaBlockElementFace(quad, direction, start, end);
+        final BlockElementFace face = AthenaBlockElementFace.of(quad, direction, start, end);
         final BlockElement element = new BlockElement(start, end, Map.of(direction.getOpposite(), face), null, true);
         return UnbakedGeometryHelper.bakeElements(
                 List.of(element),
                 mat -> sprite,
-                ForgeAthenaUtils.LOCKED_STATE,
-                ForgeAthenaUtils.DEFAULT_MODEL
+                ForgeAthenaUtils.LOCKED_STATE
         );
     }
 

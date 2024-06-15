@@ -6,16 +6,19 @@ import earth.terrarium.athena.api.client.models.AthenaBlockModel;
 import earth.terrarium.athena.api.client.models.AthenaModelFactory;
 import earth.terrarium.athena.api.client.models.AthenaQuad;
 import earth.terrarium.athena.api.client.utils.AppearanceAndTintGetter;
+import earth.terrarium.athena.api.client.utils.AthenaUtils;
 import earth.terrarium.athena.api.client.utils.CtmState;
 import earth.terrarium.athena.api.client.utils.CtmUtils;
 import earth.terrarium.athena.impl.client.models.ctm.ConnectedTextureMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
@@ -29,10 +32,16 @@ public class ConnectedBlockModel implements AthenaBlockModel {
 
     private final ConnectedTextureMap materials;
     private final BiPredicate<BlockState, BlockState> connectTo;
+    private final RenderType renderType;
 
     public ConnectedBlockModel(ConnectedTextureMap materials, BiPredicate<BlockState, BlockState> connectTo) {
+        this(materials, connectTo, null);
+    }
+
+    public ConnectedBlockModel(ConnectedTextureMap materials, BiPredicate<BlockState, BlockState> connectTo, RenderType renderType) {
         this.materials = materials;
         this.connectTo = connectTo;
+        this.renderType = renderType;
     }
 
     @Override
@@ -74,6 +83,11 @@ public class ConnectedBlockModel implements AthenaBlockModel {
         return materials.getTextures(getter);
     }
 
+    @Override
+    public @Nullable RenderType getRenderType() {
+        return this.renderType;
+    }
+
     private static class Factory implements AthenaModelFactory {
 
         @Override
@@ -88,7 +102,7 @@ public class ConnectedBlockModel implements AthenaBlockModel {
             }
             final var materialsFinal = materials;
             BiPredicate<BlockState, BlockState> conditions = CtmUtils.parseCondition(json);
-            return () -> new ConnectedBlockModel(materialsFinal, conditions);
+            return () -> new ConnectedBlockModel(materialsFinal, conditions, AthenaUtils.renderTypeFromJson(json));
         }
 
         private static ConnectedTextureMap parseMaterials(JsonObject json) {

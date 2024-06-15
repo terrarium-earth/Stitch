@@ -1,16 +1,31 @@
 package earth.terrarium.athena.api.client.utils;
 
+import com.google.gson.JsonObject;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.logging.LogUtils;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.util.GsonHelper;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
 public final class AthenaUtils {
 
     public static final Logger LOGGER = LogUtils.getLogger();
+
+    @Nullable
+    public static RenderType renderTypeFromJson(JsonObject object) {
+        return switch (GsonHelper.getAsString(object, "render_type", "")) {
+            case "solid" -> RenderType.solid();
+            case "cutout" -> RenderType.cutout();
+            case "cutout_mipped" -> RenderType.cutoutMipped();
+            case "translucent" -> RenderType.translucent();
+            default -> null;
+        };
+    }
 
     public static boolean asBool(Direction.AxisDirection axisDir) {
         return axisDir == Direction.AxisDirection.POSITIVE;

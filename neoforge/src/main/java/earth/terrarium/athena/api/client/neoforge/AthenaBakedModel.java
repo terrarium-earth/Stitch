@@ -5,6 +5,7 @@ import earth.terrarium.athena.api.client.models.AthenaQuad;
 import earth.terrarium.athena.api.client.utils.AthenaUtils;
 import earth.terrarium.athena.api.client.utils.NullableEnumMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import net.minecraft.Optionull;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -18,6 +19,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.client.ChunkRenderTypeSet;
 import net.neoforged.neoforge.client.model.IDynamicBakedModel;
 import net.neoforged.neoforge.client.model.data.ModelData;
 import net.neoforged.neoforge.client.model.data.ModelProperty;
@@ -38,10 +40,12 @@ public class AthenaBakedModel implements IDynamicBakedModel {
 
     private final AthenaBlockModel model;
     private final Int2ObjectMap<TextureAtlasSprite> textures;
+    private final ChunkRenderTypeSet renderTypes;
 
     public AthenaBakedModel(AthenaBlockModel model, Function<Material, TextureAtlasSprite> function) {
         this.model = model;
         this.textures = this.model.getTextures(function);
+        this.renderTypes = Optionull.map(this.model.getRenderType(), ChunkRenderTypeSet::of);
     }
 
     @SuppressWarnings("DataFlowIssue")
@@ -123,5 +127,11 @@ public class AthenaBakedModel implements IDynamicBakedModel {
     @Override
     public @NotNull ItemOverrides getOverrides() {
         return ItemOverrides.EMPTY;
+    }
+
+    @Override
+    public @NotNull ChunkRenderTypeSet getRenderTypes(@NotNull BlockState state, @NotNull RandomSource rand, @NotNull ModelData data) {
+        if (renderTypes != null) return renderTypes;
+        return IDynamicBakedModel.super.getRenderTypes(state, rand, data);
     }
 }

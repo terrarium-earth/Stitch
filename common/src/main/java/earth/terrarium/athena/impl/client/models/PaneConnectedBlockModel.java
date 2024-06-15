@@ -98,9 +98,6 @@ public class PaneConnectedBlockModel implements AthenaBlockModel {
             var tempNorth = north;
             north = south;
             south = tempNorth;
-            var tempEast = east;
-            east = west;
-            west = tempEast;
         }
 
         final List<AthenaQuad> quads = new ArrayList<>();

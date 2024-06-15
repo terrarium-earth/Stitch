@@ -1,1 +1,2 @@
-- Update to 1.20.5
+- Update to 1.21
+- Added optional directory where Athena models can be loaded from `/athena/`

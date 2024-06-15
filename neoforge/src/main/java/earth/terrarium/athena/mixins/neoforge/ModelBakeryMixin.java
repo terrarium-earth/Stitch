@@ -1,35 +1,32 @@
 package earth.terrarium.athena.mixins.neoforge;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import earth.terrarium.athena.api.client.models.neoforge.FactoryManagerImpl;
-import net.minecraft.client.resources.model.ModelBakery;
-import net.minecraft.client.resources.model.ModelResourceLocation;
-import net.minecraft.client.resources.model.UnbakedModel;
+import net.minecraft.client.resources.model.*;
 import net.minecraft.resources.ResourceLocation;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.Coerce;
 
 @Mixin(ModelBakery.class)
 public abstract class ModelBakeryMixin {
 
-    @Shadow protected abstract void cacheAndQueueDependencies(ResourceLocation resourceLocation, UnbakedModel unbakedModel);
-
-    @Inject(
-            method = "loadModel(Lnet/minecraft/resources/ResourceLocation;)V",
-            at = @At("HEAD"),
-            cancellable = true
+    @WrapOperation(
+            method = "method_61072",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/client/resources/model/ModelBakery$ModelBakerImpl;bakeUncached(Lnet/minecraft/client/resources/model/UnbakedModel;Lnet/minecraft/client/resources/model/ModelState;)Lnet/minecraft/client/resources/model/BakedModel;"
+            )
     )
-    private void stitch$loadModel(ResourceLocation location, CallbackInfo ci) {
-        if (location instanceof ModelResourceLocation modelId) {
-            for (ResourceLocation type : FactoryManagerImpl.getTypes()) {
-                UnbakedModel model = FactoryManagerImpl.get(type).loadModel(modelId);
-                if (model != null) {
-                    cacheAndQueueDependencies(location, model);
-                    ci.cancel();
-                }
+    private BakedModel stitch$loadModel(@Coerce ModelBaker instance, UnbakedModel unbakedModel, ModelState modelState, Operation<BakedModel> original, ModelBakery.TextureGetter spriteGetter, ModelResourceLocation id) {
+        for (ResourceLocation type : FactoryManagerImpl.getTypes()) {
+            UnbakedModel model = FactoryManagerImpl.get(type).loadModel(id);
+            if (model != null) {
+                unbakedModel = model;
+                break;
             }
         }
+        return original.call(instance, unbakedModel, modelState);
     }
 }

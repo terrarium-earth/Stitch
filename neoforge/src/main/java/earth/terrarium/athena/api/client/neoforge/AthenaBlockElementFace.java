@@ -6,10 +6,15 @@ import net.minecraft.client.renderer.block.model.BlockFaceUV;
 import net.minecraft.core.Direction;
 import org.joml.Vector3f;
 
-public class AthenaBlockElementFace extends BlockElementFace {
+public class AthenaBlockElementFace {
 
-    public AthenaBlockElementFace(AthenaQuad quad, Direction direction, Vector3f start, Vector3f end) {
-        super(quad.cull() ? direction : null, -1, "", new BlockFaceUV(getUVs(start, end, direction), (int)((quad.rotation().ordinal() * 90f) % 360f)));
+    public static BlockElementFace of(AthenaQuad quad, Direction direction, Vector3f start, Vector3f end) {
+        return new BlockElementFace(
+                quad.cull() ? direction : null,
+                -1,
+                "",
+                new BlockFaceUV(getUVs(start, end, direction), (int)((quad.rotation().ordinal() * 90f) % 360f))
+        );
     }
 
     private static float[] getUVs(Vector3f from, Vector3f to, Direction direction) {
