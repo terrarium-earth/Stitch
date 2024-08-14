@@ -39,10 +39,10 @@ public class LimitedPillarBlockModel implements AthenaBlockModel {
 
     @Override
     public List<AthenaQuad> getQuads(AppearanceAndTintGetter level, BlockState state, BlockPos pos, Direction direction) {
-        final BlockState appearance = level.getAppearance(pos, direction, state, pos);
-        final BlockState above = level.getAppearance(pos.relative(direction), direction, state, pos);
-
-        if (above.is(appearance.getBlock())) {
+        BlockPos occludingPos = pos.relative(direction);
+        BlockState appearance = level.getAppearance(state, pos, direction, level.getBlockState(occludingPos), occludingPos);
+        BlockState occludingAppearance = level.getAppearance(occludingPos, direction.getOpposite(), state, pos);
+        if (!appearance.isAir() && occludingAppearance.is(appearance.getBlock())) {
             return List.of();
         }
 
@@ -50,8 +50,12 @@ public class LimitedPillarBlockModel implements AthenaBlockModel {
             return CAP;
         }
 
-        final boolean min = level.getAppearance(pos.above(), direction, appearance, pos).is(appearance.getBlock());
-        final boolean max = level.getAppearance(pos.below(), direction, appearance, pos).is(appearance.getBlock());
+        BlockPos posAbove = pos.above();
+        BlockPos posBelow = pos.below();
+        BlockState appearanceAbove = level.getAppearance(state, pos, direction, level.getBlockState(posAbove), posAbove);
+        BlockState appearanceBelow = level.getAppearance(state, pos, direction, level.getBlockState(posBelow), posBelow);
+        final boolean min = !appearanceAbove.isAir() && level.getAppearance(posAbove, direction, state, pos).is(appearanceAbove.getBlock());
+        final boolean max = !appearanceBelow.isAir() && level.getAppearance(posBelow, direction, state, pos).is(appearanceBelow.getBlock());
 
         if (min && max) {
             return CENTER;

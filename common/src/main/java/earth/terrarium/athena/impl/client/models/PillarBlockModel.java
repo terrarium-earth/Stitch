@@ -38,21 +38,24 @@ public class PillarBlockModel implements AthenaBlockModel {
 
     @Override
     public List<AthenaQuad> getQuads(AppearanceAndTintGetter level, BlockState state, BlockPos pos, Direction direction) {
-        if (!state.hasProperty(BlockStateProperties.AXIS)) return List.of(AthenaQuad.withRotation(4, Rotation.NONE));
+        BlockPos occludingPos = pos.relative(direction);
+        BlockState occludingState = level.getBlockState(occludingPos);
+        BlockState appearance = level.getAppearance(state, pos, direction, occludingState, occludingPos);
 
-        if (state.getValue(BlockStateProperties.AXIS) == direction.getAxis()) {
+        if (!appearance.hasProperty(BlockStateProperties.AXIS)) return List.of(AthenaQuad.withRotation(4, Rotation.NONE));
+        Direction.Axis axis = appearance.getValue(BlockStateProperties.AXIS);
+        if (axis == direction.getAxis()) {
             return CAP;
         }
 
-        final BlockState appearance = level.getAppearance(pos, direction, state, pos);
-
-        final Direction.Axis axis = state.getValue(BlockStateProperties.AXIS);
-
         final Rotation rotate = CtmUtils.getPillarRotation(axis, direction);
-
         final var minMax = AthenaUtils.getMinMax(axis);
-        final boolean min = level.getAppearance(pos.relative(minMax.getFirst()), direction, appearance, pos) == appearance;
-        final boolean max = level.getAppearance(pos.relative(minMax.getSecond()), direction, appearance, pos) == appearance;
+        BlockPos posOne = pos.relative(minMax.getFirst());
+        BlockPos posTwo = pos.relative(minMax.getSecond());
+        BlockState appearanceOne = level.getAppearance(state, pos, direction, level.getBlockState(posOne), posOne);
+        BlockState appearanceTwo = level.getAppearance(state, pos, direction, level.getBlockState(posTwo), posTwo);
+        final boolean min = !appearanceOne.isAir() && level.getAppearance(posOne, direction, state, pos) == appearanceOne;
+        final boolean max = !appearanceTwo.isAir() && level.getAppearance(posTwo, direction, state, pos) == appearanceTwo;
 
         if (min && max) {
             return List.of(AthenaQuad.withRotation(2, rotate));
