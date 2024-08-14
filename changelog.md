@@ -1,2 +1,1 @@
-- Update to 1.21
-- Added optional directory where Athena models can be loaded from `/athena/`
+- Fix issues where pillars weren't using appearances correctly causing issues with mods like Framed Blocks, thanks to XFactHD for the fixes.
