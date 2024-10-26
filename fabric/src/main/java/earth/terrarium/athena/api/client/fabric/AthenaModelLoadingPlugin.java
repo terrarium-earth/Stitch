@@ -8,11 +8,11 @@ import java.util.Objects;
 public class AthenaModelLoadingPlugin implements ModelLoadingPlugin {
 
     @Override
-    public void onInitializeModelLoader(Context context) {
+    public void initialize(Context context) {
         FactoryManagerImpl.LOADERS.forEach((id, loader) ->
-            context.modifyModelBeforeBake().register((model, ctx) ->
-                Objects.requireNonNullElse(loader.loadModel(ctx.topLevelId()), model)
-            )
+                context.modifyModelBeforeBake().register((model, ctx) ->
+                        Objects.requireNonNullElse(loader.loadModel(ctx.topLevelId()), model)
+                )
         );
     }
 }

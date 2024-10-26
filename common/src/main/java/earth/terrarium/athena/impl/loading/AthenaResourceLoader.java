@@ -1,35 +1,40 @@
 package earth.terrarium.athena.impl.loading;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import earth.terrarium.athena.impl.client.DefaultModels;
-import net.minecraft.client.resources.model.BlockStateModelLoader;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.profiling.ProfilerFiller;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.function.Function;
+import java.util.concurrent.ConcurrentHashMap;
 
-public class AthenaResourceLoader extends SimpleJsonResourceReloadListener {
+public class AthenaResourceLoader extends SimpleJsonResourceReloadListener<JsonElement> {
+
+    private static final String KEY = DefaultModels.MODID + ":loader";
 
     public static final AthenaResourceLoader INSTANCE = new AthenaResourceLoader();
 
-    private Function<ResourceLocation, List<BlockStateModelLoader.LoadedJson>> getter = id -> null;
+    private final Map<ResourceLocation, JsonObject> blockstateData = new ConcurrentHashMap<>();
     private final Map<ResourceLocation, JsonElement> data = new HashMap<>();
 
     public AthenaResourceLoader() {
-        super(new Gson(), "athena");
+        super(ExtraCodecs.JSON, "athena");
     }
 
-    public void setGetter(Function<ResourceLocation, List<BlockStateModelLoader.LoadedJson>> getter) {
-        this.getter = Objects.requireNonNullElse(getter, id -> null);
+    public static void clearBlockstateData() {
+        INSTANCE.blockstateData.clear();
+    }
+
+    public static void addBlockstateData(ResourceLocation stateId, JsonObject data) {
+        if (data == null) return;
+        if (!data.has(KEY)) return;
+        INSTANCE.blockstateData.put(stateId, data);
     }
 
     @Override
@@ -43,20 +48,16 @@ public class AthenaResourceLoader extends SimpleJsonResourceReloadListener {
         if (modelData != null) {
             return checkObject(modelType, modelData);
         }
-        List<BlockStateModelLoader.LoadedJson> jsons = INSTANCE.getter.apply(convertModelIdToBlockStatePath(modelId));
-        if (jsons == null) return null;
-        for (BlockStateModelLoader.LoadedJson json : jsons) {
-            JsonObject object = checkObject(modelType, json.data());
-            if (object != null) {
-                return object;
-            }
+        var blockstateData = INSTANCE.blockstateData.get(convertModelIdToBlockStatePath(modelId));
+        if (blockstateData != null) {
+            return checkObject(modelType, blockstateData);
         }
         return null;
     }
 
     private static JsonObject checkObject(ResourceLocation modelType, JsonElement data) {
         if (data instanceof JsonObject object) {
-            String type = GsonHelper.getAsString(object, DefaultModels.MODID + ":loader", "");
+            String type = GsonHelper.getAsString(object, KEY, "");
             if (modelType.toString().equals(type)) {
                 return object;
             }

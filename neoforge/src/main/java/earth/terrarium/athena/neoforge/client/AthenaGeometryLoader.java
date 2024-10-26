@@ -6,7 +6,7 @@ import com.google.gson.JsonParseException;
 import earth.terrarium.athena.api.client.models.neoforge.FactoryManagerImpl;
 import earth.terrarium.athena.api.client.utils.AthenaUnbakedModelLoader;
 import earth.terrarium.athena.impl.client.DefaultModels;
-import net.minecraft.client.renderer.block.model.ItemOverrides;
+import net.minecraft.client.renderer.block.model.ItemOverride;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.Material;
@@ -19,6 +19,7 @@ import net.neoforged.neoforge.client.model.geometry.IGeometryLoader;
 import net.neoforged.neoforge.client.model.geometry.IUnbakedGeometry;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.function.Function;
 
 public class AthenaGeometryLoader implements IGeometryLoader<AthenaGeometryLoader.Unbaked> {
@@ -41,7 +42,7 @@ public class AthenaGeometryLoader implements IGeometryLoader<AthenaGeometryLoade
                 @NotNull ModelBaker baker,
                 @NotNull Function<Material, TextureAtlasSprite> spriteGetter,
                 @NotNull ModelState modelState,
-                @NotNull ItemOverrides arg3
+                @NotNull List<ItemOverride> overrides
         ) {
             return loader.loadModel(json).bake(baker, spriteGetter, modelState);
         }

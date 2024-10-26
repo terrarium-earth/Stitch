@@ -55,8 +55,8 @@ public record WrappedGetter(BlockAndTintGetter getter) implements AppearanceAndT
     }
 
     @Override
-    public int getMinBuildHeight() {
-        return getter.getMinBuildHeight();
+    public int getMinY() {
+        return getter.getMinY();
     }
 
     @Override

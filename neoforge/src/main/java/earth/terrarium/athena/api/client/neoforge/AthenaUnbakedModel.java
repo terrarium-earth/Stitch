@@ -21,12 +21,7 @@ public class AthenaUnbakedModel implements NotNullUnbakedModel {
     }
 
     @Override
-    public @NotNull Collection<ResourceLocation> getDependencies() {
-        return List.of();
-    }
-
-    @Override
-    public void resolveParents(@NotNull Function<ResourceLocation, UnbakedModel> function) {
+    public void resolveDependencies(@NotNull Resolver arg) {
 
     }
 

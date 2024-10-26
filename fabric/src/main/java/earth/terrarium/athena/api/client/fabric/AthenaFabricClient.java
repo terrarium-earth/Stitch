@@ -25,12 +25,10 @@ public class AthenaFabricClient implements ClientModInitializer {
         @Override
         public @NotNull CompletableFuture<Void> reload(
                 PreparationBarrier preparationBarrier, ResourceManager resourceManager,
-                ProfilerFiller profilerFiller, ProfilerFiller profilerFiller2,
                 Executor executor, Executor executor2
         ) {
             return AthenaResourceLoader.INSTANCE.reload(
                     preparationBarrier, resourceManager,
-                    profilerFiller, profilerFiller2,
                     executor, executor2
             );
         }

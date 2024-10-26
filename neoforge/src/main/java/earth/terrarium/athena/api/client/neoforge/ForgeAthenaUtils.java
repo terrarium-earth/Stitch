@@ -25,7 +25,7 @@ public class ForgeAthenaUtils {
         final Vector3f start = getStartPos(quad, direction);
         final Vector3f end = getEndPos(quad, direction);
         final BlockElementFace face = AthenaBlockElementFace.of(quad, direction, start, end);
-        final BlockElement element = new BlockElement(start, end, Map.of(direction.getOpposite(), face), null, true);
+        final BlockElement element = new BlockElement(start, end, Map.of(direction.getOpposite(), face));
         return UnbakedGeometryHelper.bakeElements(
                 List.of(element),
                 mat -> sprite,
