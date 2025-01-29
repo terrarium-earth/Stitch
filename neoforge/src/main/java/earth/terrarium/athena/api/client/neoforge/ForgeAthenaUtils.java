@@ -9,7 +9,7 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.core.Direction;
 import net.neoforged.neoforge.client.model.SimpleModelState;
-import net.neoforged.neoforge.client.model.geometry.UnbakedGeometryHelper;
+import net.neoforged.neoforge.client.model.UnbakedElementsHelper;
 import org.jetbrains.annotations.ApiStatus;
 import org.joml.Vector3f;
 
@@ -26,7 +26,7 @@ public class ForgeAthenaUtils {
         final Vector3f end = getEndPos(quad, direction);
         final BlockElementFace face = AthenaBlockElementFace.of(quad, direction, start, end);
         final BlockElement element = new BlockElement(start, end, Map.of(direction.getOpposite(), face));
-        return UnbakedGeometryHelper.bakeElements(
+        return UnbakedElementsHelper.bakeElements(
                 List.of(element),
                 mat -> sprite,
                 ForgeAthenaUtils.LOCKED_STATE

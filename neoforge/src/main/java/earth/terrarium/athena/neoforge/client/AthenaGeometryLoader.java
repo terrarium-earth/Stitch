@@ -6,23 +6,18 @@ import com.google.gson.JsonParseException;
 import earth.terrarium.athena.api.client.models.neoforge.FactoryManagerImpl;
 import earth.terrarium.athena.api.client.utils.AthenaUnbakedModelLoader;
 import earth.terrarium.athena.impl.client.DefaultModels;
-import net.minecraft.client.renderer.block.model.ItemOverride;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.client.renderer.block.model.TextureSlots;
 import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.client.resources.model.Material;
 import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.ModelState;
+import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
-import net.neoforged.neoforge.client.model.geometry.IGeometryBakingContext;
-import net.neoforged.neoforge.client.model.geometry.IGeometryLoader;
-import net.neoforged.neoforge.client.model.geometry.IUnbakedGeometry;
+import net.neoforged.neoforge.client.model.UnbakedModelLoader;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-import java.util.function.Function;
-
-public class AthenaGeometryLoader implements IGeometryLoader<AthenaGeometryLoader.Unbaked> {
+public class AthenaGeometryLoader implements UnbakedModelLoader<AthenaGeometryLoader.Unbaked> {
 
     @Override
     public @NotNull Unbaked read(@NotNull JsonObject json, @NotNull JsonDeserializationContext context) throws JsonParseException {
@@ -34,17 +29,16 @@ public class AthenaGeometryLoader implements IGeometryLoader<AthenaGeometryLoade
         return new Unbaked(loader, json);
     }
 
-    public record Unbaked(AthenaUnbakedModelLoader loader, JsonObject json) implements IUnbakedGeometry<Unbaked> {
+    public record Unbaked(AthenaUnbakedModelLoader loader, JsonObject json) implements UnbakedModel {
 
         @Override
-        public @NotNull BakedModel bake(
-                @NotNull IGeometryBakingContext context,
-                @NotNull ModelBaker baker,
-                @NotNull Function<Material, TextureAtlasSprite> spriteGetter,
-                @NotNull ModelState modelState,
-                @NotNull List<ItemOverride> overrides
-        ) {
-            return loader.loadModel(json).bake(baker, spriteGetter, modelState);
+        public @NotNull BakedModel bake(@NotNull TextureSlots slots, @NotNull ModelBaker baker, @NotNull ModelState state, boolean bl, boolean bl2, @NotNull ItemTransforms arg4) {
+            return loader.loadModel(json).bake(baker);
+        }
+
+        @Override
+        public void resolveDependencies(@NotNull Resolver arg) {
+
         }
     }
 }

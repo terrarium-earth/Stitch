@@ -1,18 +1,15 @@
 package earth.terrarium.athena.api.client.neoforge;
 
 import earth.terrarium.athena.api.client.models.AthenaBlockModel;
-import earth.terrarium.athena.api.client.models.NotNullUnbakedModel;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.model.*;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.renderer.block.model.UnbakedBlockStateModel;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.ModelBaker;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class AthenaUnbakedModel implements NotNullUnbakedModel {
+public class AthenaUnbakedModel implements UnbakedBlockStateModel {
 
     private final Supplier<AthenaBlockModel> model;
 
@@ -25,9 +22,13 @@ public class AthenaUnbakedModel implements NotNullUnbakedModel {
 
     }
 
-    @NotNull
     @Override
-    public BakedModel bake(@NotNull ModelBaker modelBaker, @NotNull Function<Material, TextureAtlasSprite> function, @NotNull ModelState modelState) {
-        return new AthenaBakedModel(this.model.get(), function);
+    public @NotNull BakedModel bake(ModelBaker baker) {
+        return new AthenaBakedModel(this.model.get(), baker.sprites()::get);
+    }
+
+    @Override
+    public @NotNull Object visualEqualityGroup(@NotNull BlockState arg) {
+        return this;
     }
 }

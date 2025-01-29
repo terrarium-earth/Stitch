@@ -2,31 +2,35 @@ package earth.terrarium.athena.mixins.neoforge;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.llamalad7.mixinextras.sugar.Local;
 import earth.terrarium.athena.api.client.models.neoforge.FactoryManagerImpl;
-import net.minecraft.client.resources.model.*;
+import net.minecraft.client.renderer.block.model.UnbakedBlockStateModel;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.ModelBaker;
+import net.minecraft.client.resources.model.ModelBakery;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.resources.ResourceLocation;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Coerce;
 
 @Mixin(ModelBakery.class)
 public abstract class ModelBakeryMixin {
 
     @WrapOperation(
-            method = "method_61072",
+            method = "method_65737",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/client/resources/model/ModelBakery$ModelBakerImpl;bakeUncached(Lnet/minecraft/client/resources/model/UnbakedModel;Lnet/minecraft/client/resources/model/ModelState;)Lnet/minecraft/client/resources/model/BakedModel;"
+                    target = "Lnet/minecraft/client/renderer/block/model/UnbakedBlockStateModel;bake(Lnet/minecraft/client/resources/model/ModelBaker;)Lnet/minecraft/client/resources/model/BakedModel;"
             )
     )
-    private BakedModel stitch$loadModel(@Coerce ModelBaker instance, UnbakedModel unbakedModel, ModelState modelState, Operation<BakedModel> original, ModelBakery.TextureGetter spriteGetter, ModelResourceLocation id) {
+    private BakedModel stitch$loadModel(UnbakedBlockStateModel instance, ModelBaker baker, Operation<BakedModel> original, @Local(argsOnly = true) ModelResourceLocation id) {
         for (ResourceLocation type : FactoryManagerImpl.getTypes()) {
-            UnbakedModel model = FactoryManagerImpl.get(type).loadModel(id);
+            UnbakedBlockStateModel model = FactoryManagerImpl.get(type).loadModel(id);
             if (model != null) {
-                unbakedModel = model;
+                instance = model;
                 break;
             }
         }
-        return original.call(instance, unbakedModel, modelState);
+        return original.call(instance, baker);
     }
 }

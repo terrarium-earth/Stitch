@@ -3,6 +3,7 @@ package earth.terrarium.athena.impl.loading;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import earth.terrarium.athena.impl.client.DefaultModels;
+import net.minecraft.resources.FileToIdConverter;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
@@ -24,7 +25,7 @@ public class AthenaResourceLoader extends SimpleJsonResourceReloadListener<JsonE
     private final Map<ResourceLocation, JsonElement> data = new HashMap<>();
 
     public AthenaResourceLoader() {
-        super(ExtraCodecs.JSON, "athena");
+        super(ExtraCodecs.JSON, FileToIdConverter.json("athena"));
     }
 
     public static void clearBlockstateData() {
@@ -48,7 +49,7 @@ public class AthenaResourceLoader extends SimpleJsonResourceReloadListener<JsonE
         if (modelData != null) {
             return checkObject(modelType, modelData);
         }
-        var blockstateData = INSTANCE.blockstateData.get(convertModelIdToBlockStatePath(modelId));
+        var blockstateData = INSTANCE.blockstateData.get(modelId);
         if (blockstateData != null) {
             return checkObject(modelType, blockstateData);
         }
@@ -63,9 +64,5 @@ public class AthenaResourceLoader extends SimpleJsonResourceReloadListener<JsonE
             }
         }
         return null;
-    }
-
-    private static ResourceLocation convertModelIdToBlockStatePath(ResourceLocation modelId) {
-        return ResourceLocation.fromNamespaceAndPath(modelId.getNamespace(), "blockstates/" + modelId.getPath() + ".json");
     }
 }
